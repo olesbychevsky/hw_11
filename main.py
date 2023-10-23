@@ -66,7 +66,8 @@ class Record:
     def __init__(self, name, birthday=None):
         self.name = Name(name)
         self.phones = []
-        self.birthday = Birthday(birthday) if birthday else None
+        self._birthday = None
+        self.birthday = birthday
 
     def add_phone(self, phone):
         if self.is_valid_phone(phone):
@@ -96,6 +97,23 @@ class Record:
         for p in self.phones:
             if p.value == phone:
                 return self.phones.remove(p)
+
+    @property
+    def birthday(self):
+        return self._birthday
+
+    @birthday.setter
+    def birthday(self, value):
+        if value:
+            self.validate_birthday(value)
+        self._birthday = value
+
+    @staticmethod
+    def validate_birthday(date):
+        try:
+            datetime.strptime(date, '%Y-%m-%d')
+        except ValueError:
+            raise ValueError("Invalid birthday format. Use YYYY-MM-DD.")
 
 
 def input_error(func):
